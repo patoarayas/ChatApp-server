@@ -9,4 +9,5 @@ class Message extends Model
     //
     protected $primaryKey = "message_id";
 
+
 }

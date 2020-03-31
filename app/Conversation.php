@@ -8,4 +8,5 @@ class Conversation extends Model
 {
     //
     protected $primaryKey = "conv_id";
+
 }
