@@ -16,36 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace App;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-class Message extends Model
+class CreateConversationUserTable extends Migration
 {
-
-    protected $fillable = [
-        'conversation_id',
-        'user_id',
-        'content',
-        'loc_latitude',
-        'loc_longitude',
-        'loc_error'
-    ];
-
     /**
-     * A message belongs to a conversation.
-     * @return BelongsTo
+     * Run the migrations.
+     *
+     * @return void
      */
-    public function conversation(){
-        return $this->belongsTo(Conversation::class);
+    public function up()
+    {
+        Schema::create('conversation_user', function (Blueprint $table) {
+            $table->bigInteger('conversation_id');
+            $table->bigInteger('user_id');
+            $table->timestamps();
+
+            $table->foreign("conversation_id")->references('id')->on("conversations");
+            $table->foreign("user_id")->references('id')->on("users");
+        });
     }
 
     /**
-     * A message belongs to an user.
-     * @return BelongsTo
+     * Reverse the migrations.
+     *
+     * @return void
      */
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function down()
+    {
+        Schema::dropIfExists('conversation_user');
     }
 }
