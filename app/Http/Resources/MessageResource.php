@@ -30,6 +30,15 @@ class MessageResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'conversation_id' => $this->conversation_id,
+            'user_id' => $this->user_id,
+            'content' => $this->content,
+            'created_at' => $this->created_at,
+            'loc_longitude' => $this->longitude,
+            'loc_latitude' => $this->loc_latitude,
+            'loc_error' => $this->loc_error,
+        ];
     }
 }

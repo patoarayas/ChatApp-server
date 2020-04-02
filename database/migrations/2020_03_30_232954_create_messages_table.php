@@ -47,7 +47,7 @@ class CreateMessagesTable extends Migration
 
             // Relations
             $table->foreign("user_id")->references("id")->on("users");
-            $table->foreign("conversation_id")->references("conv_id")->on("conversations");
+            $table->foreign("conversation_id")->references("id")->on("conversations");
         });
     }
 

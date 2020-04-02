@@ -67,7 +67,7 @@ class User extends Authenticatable
      * Relationship with messages
      * An user has many messages through many conversations
      */
-    // TODO:// Innecesary method
+    // TODO: Unnecessary method?
     public function messages(){
         return $this->hasMany(Message::class);
     }

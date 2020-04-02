@@ -18,6 +18,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConversationResource;
+use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -28,9 +30,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    // TODO: add resources, define function of every method,
 
     /**
+     * Authenticate an user, returns an api token for further access to the API.
      * @param Request $request
      * @return mixed
      */
@@ -44,38 +46,53 @@ class ChatController extends Controller
             return \response($usr);
 
         } else{
-            return \response("Invalid credentials",420);
+            return \response("UNAUTHORIZED: Invalid credentials",401);
         }
     }
 
 
     /**
      * Display a listing of the resource.
+     * Display Users
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        echo 'index';
-        //
 
+        return \response(UserResource::collection(User::all()));
 
     }
 
     /**
      * Store a newly created resource in storage.
+     * Store a new chat (conversation).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        echo 'store';
+        $api_token = $request->get('api_token');
+        $usr = User::where('api_token',$api_token)->first();
+
+        if($usr == null){
+            return \response('Resource not found',404);
+        }
+
+        // TODO: Validation
+        $conversation = new Conversation;
+        $conversation->user_one_id = $usr->id;
+        $conversation->user_two_id = $request->get('to');
+
+        $conversation->save();
+
+        return \response(new ConversationResource($conversation));
     }
 
     /**
      * Display the specified resource.
-     *
+     * Display an user (validated by api token) conversations and messages.
      * @param  String api_token
      * @return \Illuminate\Http\Response
      */
@@ -84,7 +101,7 @@ class ChatController extends Controller
         echo 'show';
         $usr = User::where('api_token',$api_token)->first();
         if($usr !== null){
-            return \response(new UserResource($usr));
+            return \response(ConversationResource::collection($usr->conversations));
         } else {
             return \response('Resource not found.', 404);
         }
@@ -94,15 +111,24 @@ class ChatController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
+     * Add a new message to a conversation.
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $api_token
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $api_token)
     {
-        echo 'update';
-        //
+        // Auth
+        $usr = User::where('api_token',$api_token)->first();
+        if($usr == null){
+            return \response('Resource not found',404);
+        }
+
+        // TODO: Validation
+        $message = new Message($request->only('conversation_id','content','loc_longitude','loc_latitude','loc_error'));
+        $message->user_id = $usr->id;
+        $message->save();
+        \response( new MessageResource($message));
     }
 
     /**
