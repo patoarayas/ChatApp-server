@@ -31,8 +31,12 @@ class CreateConversationsTable extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('user_one_id');
+            $table->bigInteger('user_two_id');
             $table->timestamps();
 
+            $table->foreign('user_one_id')->references('id')->on('users');
+            $table->foreign('user_two_id')->references('id')->on('users');
         });
     }
 

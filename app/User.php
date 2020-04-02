@@ -33,7 +33,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','api_token'
     ];
 
     /**
@@ -57,17 +57,18 @@ class User extends Authenticatable
     /**
      * Relationship with conversations
      * An user has many conversations.
-     * @return belongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function conversations(){
-        return $this->belongsToMany(Conversation::class);
+        return $this->hasMany(Conversation::class,'user_one_id');
     }
 
     /**
      * Relationship with messages
      * An user has many messages through many conversations
      */
+    // TODO:// Innecesary method
     public function messages(){
-        return $this->hasManyThrough(Message::class,Conversation::class);
+        return $this->hasMany(Message::class);
     }
 }

@@ -27,13 +27,19 @@ class Conversation extends Model
 
 
     /**
-     * A conversation has many users (2).
-     *
-     * @return BelongsToMany
+     * Relation with user one
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
+    public function user_one(){
+        return $this->hasOne(User::class, 'id','user_one_id');
+    }
+
+    /**
+     * Relation with user two
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function user_two(){
+        return $this->hasOne(User::class, 'id','user_two_id');
     }
 
     /**

@@ -39,9 +39,9 @@ class CreateMessagesTable extends Migration
             $table->string("content");
 
             // Localization
-            $table->string("loc_latitude");
-            $table->string("loc_longitude");
-            $table->string("loc_error");
+            $table->string("loc_latitude")->nullable();
+            $table->string("loc_longitude")->nullable();
+            $table->string("loc_error")->nullable();
 
             $table->timestamps();
 

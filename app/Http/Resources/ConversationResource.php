@@ -16,25 +16,26 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Illuminate\Http\Request;
+namespace App\Http\Resources;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+use Illuminate\Http\Resources\Json\JsonResource;
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-*/
-
-Route::resource('chat', 'ChatController');
-Route::post('auth', function (Request $request){
-    return (new App\Http\Controllers\ChatController)->auth($request);
-});
+class ConversationResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return [
+            'conversation_id' =>  $this->id,
+            'user_one_id' => $this->user_one_id,
+            'user_two_id' => $this->user_two_id,
+            'created_at' => $this->created_at,
+            'messages' => MessageResource::collection($this->messages),
+        ];
+    }
+}

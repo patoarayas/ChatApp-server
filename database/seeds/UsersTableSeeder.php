@@ -16,36 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Seeder;
 
-class CreateConversationUserTable extends Migration
+class UsersTableSeeder extends Seeder
 {
     /**
-     * Run the migrations.
+     * Run the database seeds.
      *
      * @return void
      */
-    public function up()
+    public function run()
     {
-        Schema::create('conversation_user', function (Blueprint $table) {
-            $table->bigInteger('conversation_id');
-            $table->bigInteger('user_id');
-            $table->timestamps();
+        $cant = 3; // How many users to seed
+        for ($i = 1; $i <= $cant; $i++){
+            \App\User::create([
 
-            $table->foreign("conversation_id")->references('id')->on("conversations");
-            $table->foreign("user_id")->references('id')->on("users");
-        });
-    }
+                'name' => 'usuario'.$i,
+                'email' => 'usuario'.$i.'@usuarios.cl',
+                'password' => bcrypt('usuario'.$i),
+                'api_token' => \Illuminate\Support\Str::random(60),
+            ]);
+        }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('conversation_user');
     }
 }
