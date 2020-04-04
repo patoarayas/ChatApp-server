@@ -22,6 +22,7 @@ use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
 use http\Env\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\User;
 use App\Conversation;
@@ -36,18 +37,19 @@ class ChatController extends Controller
      * @param Request $request Must have an email and password keys
      * @return mixed Response
      */
-    public function auth(Request $request){
+    public function auth(Request $request)
+    {
 
-        $credentials = $request->only('email','password');
+        $credentials = $request->only('email', 'password');
 
-        if(Auth::attempt($credentials)){
+        if (Auth::attempt($credentials)) {
 
             $usr = User::where('email', $credentials['email'])->get();
 
             return \response($usr);
 
-        } else{
-            return \response("UNAUTHORIZED: Invalid credentials",401);
+        } else {
+            return \response("UNAUTHORIZED: Invalid credentials", 401);
         }
     }
 
@@ -74,33 +76,34 @@ class ChatController extends Controller
     {
 
         $api_token = $request->get('api_token');
-        $usr = User::where('api_token',$api_token)->first();
+        $usr = User::where('api_token', $api_token)->first();
 
-        if($usr == null){
-            return \response('Resource not found',404);
+        if ($usr == null) {
+            return \response('Resource not found', 404);
         }
 
-        /*
-         $validator = Validator::make($request->get('to'),[
-            'to' => 'required|numeric|exists:users,id|unique:conversations,id'
+
+        $validator = Validator::make($request->only('to'), [
+            'to' => 'required|numeric|exists:users,id'
         ]);
 
-        if($validator->fails()){
-            return \response('Validations error',400);
+        if ($validator->fails()) {
+            return \response($validator->errors(), 400);
         }
-        */
 
-        /*
-         * TODO: Validation-> If conversation already exist with an user dont create a new one.
-         * TODO: Validation-> If user doesn't exist return error message.
-         */
+        // If the user already has a conversation with the user in 'to' parameter return that conversation.
+        foreach ($usr->conversations as $conv) {
+            foreach ($conv->users as $conv_usr) {
+                if ($conv_usr->id == $request->get('to')) {
+                    return \response(new ConversationResource($conv));
+                }
+            }
+        }
 
-        $usr_receiver = User::where('id',$request->get('to'));
-
+        // Creates a new conversation.
         $conversation = new Conversation;
         $conversation->save();
         $conversation->users()->attach([$usr->id, $request->get('to')]);
-
 
 
         return \response(new ConversationResource($conversation));
@@ -109,14 +112,14 @@ class ChatController extends Controller
     /**
      * Display the specified resource.
      * Display an user (validated by api token) conversations and messages.
-     * @param  String api_token
+     * @param String api_token
      * @return \Illuminate\Http\Response
      */
     public function show($api_token)
     {
         echo 'show';
-        $usr = User::where('api_token',$api_token)->first();
-        if($usr !== null){
+        $usr = User::where('api_token', $api_token)->first();
+        if ($usr !== null) {
             return \response(ConversationResource::collection($usr->conversations));
         } else {
             return \response('Resource not found.', 404);
@@ -128,33 +131,38 @@ class ChatController extends Controller
     /**
      * Add a new message to a conversation.
      * @param Request $request
-     * @param  int  $api_token
+     * @param int $api_token
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $api_token)
     {
         // Auth
-        $usr = User::where('api_token',$api_token)->first();
-        if($usr == null){
-            return \response('Resource not found. Invalid API token.',404);
+        $usr = User::where('api_token', $api_token)->first();
+        if ($usr == null) {
+            return \response('Resource not found. Invalid API token.', 404);
         }
 
-        /*
-         * TODO: Validation-> Conversation id must be an already existent conversation.
-         * TODO: Validation-> Content cannot be null nor empty.
-         * TODO: Validation-> Return error message if validation is invalid.
-         */
-        $message = new Message($request->only('conversation_id','content','loc_longitude','loc_latitude','loc_error'));
+        $validator = Validator::make($request->only(['conversation_id', 'content']),
+            [
+                'conversation_id' => 'required|numeric|exists:conversations,id',
+                'content' => 'required'
+            ]);
+
+        if ($validator->fails()) {
+            return \response($validator->errors(), 400);
+        }
+
+        $message = new Message($request->only('conversation_id', 'content', 'loc_longitude', 'loc_latitude', 'loc_error'));
         $message->user_id = $usr->id;
         $message->save();
 
-        return \response( new MessageResource($message));
+        return \response(new MessageResource($message));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
