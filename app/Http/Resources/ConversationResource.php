@@ -32,8 +32,7 @@ class ConversationResource extends JsonResource
     {
         return [
             'conversation_id' =>  $this->id,
-            'user_one_id' => $this->user_one_id,
-            'user_two_id' => $this->user_two_id,
+            'users' => UserResource::collection($this->users),
             'created_at' => $this->created_at,
             'messages' => MessageResource::collection($this->messages),
         ];

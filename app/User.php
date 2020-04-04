@@ -57,18 +57,11 @@ class User extends Authenticatable
     /**
      * Relationship with conversations
      * An user has many conversations.
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return BelongsToMany
      */
     public function conversations(){
-        return $this->hasMany(Conversation::class,'user_one_id');
+        return $this->belongsToMany(Conversation::class)->orderBy('created_at');
     }
 
-    /**
-     * Relationship with messages
-     * An user has many messages through many conversations
-     */
-    // TODO: Unnecessary method?
-    public function messages(){
-        return $this->hasMany(Message::class);
-    }
+
 }

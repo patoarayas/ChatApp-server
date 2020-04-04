@@ -30,23 +30,34 @@ class Conversation extends Model
      * Relation with user one
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function user_one(){
-        return $this->hasOne(User::class, 'id','user_one_id');
-    }
+//    public function user_one()
+//    {
+//        return $this->hasOne(User::class, 'id', 'user_one_id');
+//    }
 
     /**
      * Relation with user two
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function user_two(){
-        return $this->hasOne(User::class, 'id','user_two_id');
+//    public function user_two()
+//    {
+//        return $this->hasOne(User::class, 'id', 'user_two_id');
+//    }
+
+    /**
+     * A conversations belongs to many users (2 at least).
+     * @return BelongsToMany
+     */
+    public function users(){
+        return $this->belongsToMany(User::class);
     }
 
     /**
      * A conversation has many messages
      * @return HasMany
      */
-    public function messages(){
+    public function messages()
+    {
         return $this->hasMany(Message::class);
     }
 

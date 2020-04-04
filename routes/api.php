@@ -35,6 +35,9 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('chat', 'ChatController');
-Route::post('auth', function (Request $request){
-    return (new App\Http\Controllers\ChatController)->auth($request);
-});
+
+Route::post('/auth',
+    function (Request $request){
+        return (new App\Http\Controllers\ChatController)->auth($request);
+    }
+);

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateConversationsTable extends Migration
+class CreateConversationUser extends Migration
 {
     /**
      * Run the migrations.
@@ -29,12 +29,14 @@ class CreateConversationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('conversations', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('conversation_user', function (Blueprint $table) {
 
+            $table->bigInteger('user_id');
+            $table->bigInteger('conversation_id');
             $table->timestamps();
 
-
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('conversation_id')->references('id')->on('conversations');
         });
     }
 
@@ -45,6 +47,6 @@ class CreateConversationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('conversations');
+        Schema::dropIfExists('conversation_user');
     }
 }
