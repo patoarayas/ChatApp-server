@@ -31,9 +31,9 @@ class ConversationResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'conversation_id' =>  $this->id,
+            'conversationId' => $this->id,
             'users' => UserResource::collection($this->users),
-            'created_at' => $this->created_at,
+            'createdAt' => $this->created_at,
             'messages' => MessageResource::collection($this->messages),
         ];
     }

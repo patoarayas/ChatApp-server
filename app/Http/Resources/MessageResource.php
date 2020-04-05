@@ -32,13 +32,13 @@ class MessageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'conversation_id' => $this->conversation_id,
-            'user_id' => $this->user_id,
+            'conversationId' => $this->conversation_id,
+            'userId' => $this->user_id,
             'content' => $this->content,
-            'created_at' => $this->created_at,
-            'loc_longitude' => $this->longitude,
-            'loc_latitude' => $this->loc_latitude,
-            'loc_error' => $this->loc_error,
+            'createdAt' => $this->created_at,
+            'longitude' => $this->longitude,
+            'latitude' => $this->loc_latitude,
+            'localizationError' => $this->loc_error,
         ];
     }
 }

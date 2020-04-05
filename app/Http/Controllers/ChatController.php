@@ -44,7 +44,7 @@ class ChatController extends Controller
 
         if (Auth::attempt($credentials)) {
 
-            $usr = User::where('email', $credentials['email'])->get();
+            $usr = User::where('email', $credentials['email'])->first();
 
             return \response($usr);
 
