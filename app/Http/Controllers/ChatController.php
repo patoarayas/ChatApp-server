@@ -46,7 +46,12 @@ class ChatController extends Controller
 
             $usr = User::where('email', $credentials['email'])->first();
 
-            return \response($usr);
+            return \response([
+                'id' => $usr->id,
+                'name' => $usr->name,
+                'email' => $usr->email,
+                'apiToken' => $usr->api_token
+            ]);
 
         } else {
             return \response("UNAUTHORIZED: Invalid credentials", 401);
